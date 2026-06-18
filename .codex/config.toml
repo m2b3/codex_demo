@@ -1,0 +1,5 @@
+# Project-local Codex demo config.
+#
+# Project .codex layers load only when this project is trusted.
+[features]
+hooks = true

@@ -1,0 +1,55 @@
+# Experimental Codex execpolicy rules for presentation/testing.
+
+prefix_rule(
+    pattern = ["rm", "-rf", "__pycache__"],
+    decision = "allow",
+    justification = "Allow removing generated Python cache directories under this repo.",
+    match = [
+        "rm -rf __pycache__",
+    ],
+    not_match = [
+        "rm -rf .",
+        "rm -rf backend/autostats_backend",
+    ],
+)
+
+# This is intentionally not pattern = ["rm"]. A broad rm prompt would also
+# match the pycache allow rule above, and Codex applies the stricter decision.
+prefix_rule(
+    pattern = ["rm", "demo_file.txt"],
+    decision = "prompt",
+    justification = "Prompt before removing this demo file.",
+    match = [
+        "rm demo_file.txt",
+    ],
+    not_match = [
+        "rm -rf backend/autostats_backend/__pycache__",
+        "rmdir demo_file.txt",
+    ],
+)
+
+prefix_rule(
+    pattern = ["rm", "-r", "demo_folder"],
+    decision = "prompt",
+    justification = "Prompt before recursively removing this demo folder.",
+    match = [
+        "rm -r demo_folder",
+    ],
+    not_match = [
+        "rm -rf backend/autostats_backend/__pycache__",
+        "rm -rf .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf", "."],
+    decision = "forbidden",
+    justification = "Never remove the current working directory; confirm with the user again for what to delete.",
+    match = [
+        "rm -rf .",
+    ],
+    not_match = [
+        "rm -rf ./tmp",
+        "rm -rf backend/autostats_backend/__pycache__",
+    ],
+)
